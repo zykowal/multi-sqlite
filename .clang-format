@@ -1,5 +1,5 @@
 ---
-Language:        Cpp
+Language: Cpp
 style: google
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
@@ -103,7 +103,6 @@ PenaltyBreakString: 1000
 PenaltyBreakTemplateDeclaration: 10
 PenaltyExcessCharacter: 1000000
 PenaltyReturnTypeOnItsOwnLine: 1000
-PointerAlignment: Right
 ReflowComments:  false
 SortIncludes:    true
 SortUsingDeclarations: true
