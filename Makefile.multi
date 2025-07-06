@@ -1,0 +1,52 @@
+# Makefile for Multi-Connection SQLite Demo
+
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Wextra -O2 -pthread
+LIBS = -lsqlite3
+
+# 多连接版本源文件
+MC_SOURCES = multi_connection_main.cpp \
+             multi_connection_database_manager.cpp \
+             multi_connection_user_manager.cpp \
+             multi_connection_order_manager.cpp \
+             multi_connection_product_manager.cpp
+
+MC_OBJECTS = $(MC_SOURCES:.cpp=.o)
+MC_TARGET = multi_connection_demo
+
+# 默认目标
+all: $(MC_TARGET)
+
+# 链接目标
+$(MC_TARGET): $(MC_OBJECTS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LIBS)
+
+# 编译规则
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# 清理
+clean:
+	rm -f $(MC_OBJECTS) $(MC_TARGET) *_db.db *_db.db-wal *_db.db-shm
+
+# 运行
+run: $(MC_TARGET)
+	./$(MC_TARGET)
+
+# 调试版本
+debug: CXXFLAGS += -g -DDEBUG
+debug: $(MC_TARGET)
+
+# 性能对比测试
+compare: sqlite_demo $(MC_TARGET)
+	@echo "=== 单连接版本测试 ==="
+	time ./sqlite_demo > single_connection_result.txt 2>&1
+	@echo "=== 多连接版本测试 ==="
+	time ./$(MC_TARGET) > multi_connection_result.txt 2>&1
+	@echo "=== 测试结果对比 ==="
+	@echo "单连接版本结果:"
+	@tail -10 single_connection_result.txt
+	@echo "多连接版本结果:"
+	@tail -10 multi_connection_result.txt
+
+.PHONY: all clean run debug compare
